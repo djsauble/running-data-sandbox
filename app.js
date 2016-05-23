@@ -1,35 +1,25 @@
 // Load the app when the page loads
+var App;
 window.onload = function() {
-  initApp();
+  App = new RunApp();
 }
 
-function initApp() {
+class RunApp {
+  constructor() {
+    this.ui = new UI();
+    this.data = new Data(this.ui);
+    this.init();
+  }
 
-  // Initialize databases
-  initDatabases().then(function() {
-    console.log("Ready to go!");
+  init() {
+    var me = this;
 
-    // Initialize the bits of the UI that should not be active until there's data
-    initUI();
-  });
+    // Initialize databases
+    me.data.init().then(function() {
+      console.log("Ready to go!");
 
-  // Pull changes from the remote database
-  /*db.replicate.from(remoteDB).then(function () {
-    return db.allDocs({include_docs: true});
-  }).then(function(results) {
-
-    // Sort the results
-    var sorted = results.rows.sort(function(a, b) {
-      return (new Date(b.doc.timestamp)).getTime() - (new Date(a.doc.timestamp)).getTime();
-    }).map(function(e) { return e.doc });
-
-    // Display the results
-    document.writeln("<ul>");
-    for (var i in sorted) {
-      document.writeln("<li>" + sorted[i].timestamp + "</li>");
-    }
-    document.writeln("</ul>");
-  }).catch(function (err) {
-    console.log(err);
-  });*/
+      // Initialize the bits of the UI that should not be active until there's data
+      me.ui.init(me.data);
+    });
+  }
 }

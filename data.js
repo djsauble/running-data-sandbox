@@ -1,48 +1,43 @@
-var db, remoteDB;
+class Data {
+  constructor(ui) {
+    this.ui = ui;
+  }
 
-/* Initialize the local database and populate with data if empty */
-function initDatabases() {
-  var user = "ckinamistiongedenterattl";
-  var password = "9047d84b808fe51b65ff94624f80acf8f55fcd63";
-  remoteDB = new PouchDB('https://' + user + ':' + password + '@djsauble.cloudant.com/be7b25ca3682ef8a15682f791c6110648152d7e4');
-  db = new PouchDB('runs');
+  /* Initialize the local database and populate with data if empty */
+  init() {
+    var me = this;
+    var user = "ckinamistiongedenterattl";
+    var password = "9047d84b808fe51b65ff94624f80acf8f55fcd63";
+    me.remoteDB = new PouchDB('https://' + user + ':' + password + '@djsauble.cloudant.com/be7b25ca3682ef8a15682f791c6110648152d7e4');
+    me.db = new PouchDB('runs');
 
-  return new Promise(function(resolve, reject) {
-    db.allDocs().then(function(results) {
-      // If there's data in the local cache, don't fetch new stuff
-      if (results.total_rows > 0) {
-        refreshDisplay().then(function() {
+    return new Promise(function(resolve, reject) {
+      me.db.allDocs().then(function(results) {
+        // Only refresh if the cache is empty
+        if (results.total_rows == 0) {
+          me.refresh().then(function() {
+            resolve();
+          });
+        }
+        else {
           resolve();
-        });
-      }
-      else {
-        refreshData().then(function() {
-          resolve();
-        });
-      }
+        }
+      });
     });
-  });
-}
+  }
 
-/* Refresh the local cache and display new data */
-function refreshData() {
-  console.log("Refreshing cache...");
-  return new Promise(function(resolve, reject) {
-    db.replicate.from(remoteDB).then(function() {
-      return refreshDisplay();
-    }).then(function() {
-      resolve();
-    });
-  });
-}
+  /* Refresh the local cache and display new data */
+  refresh() {
+    console.log("Refreshing cache...");
 
-/* Display data from the local cache */
-function refreshDisplay() {
-  console.log("Refreshing display...");
-  return new Promise(function(resolve, reject) {
-    db.allDocs({include_docs: true}).then(function(results) {
-      document.getElementById("title").innerHTML = results.rows.length + " runs";
-      resolve();
+    var me = this;
+
+    return new Promise(function(resolve, reject) {
+      me.db.replicate.from(me.remoteDB).then(function() {
+        return me.ui.refresh();
+      }).then(function() {
+        resolve();
+      });
     });
-  });
+  }
 }
