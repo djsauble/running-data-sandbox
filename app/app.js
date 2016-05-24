@@ -20,7 +20,13 @@ class RunApp {
     me.data.init().then(function() {
 
       // Initialize the bits of the UI that should not be active until there's data
-      me.ui.init(me.data);
+      return me.ui.init(me.data);
+
+    }).then(function() {
+
+      // Refresh the display
+      me.ui.refresh();
+
     });
   }
 }

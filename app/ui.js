@@ -2,6 +2,7 @@ class UI {
   constructor() {
     this.overlays = [];
     this.timers = [];
+    this.currentRun = "27bb62d31b5bfee762d1f4d021e95dc800999f12";
   }
 
   /* Initialize the UI */
@@ -23,8 +24,28 @@ class UI {
       draggable: false
     });
 
-    // Refresh the display
-    me.refresh();
+    // Display the list of runs (and set the current run to the latest run)
+    return new Promise(function(resolve, reject) {
+      me.data.db.allDocs({include_docs: true}).then(function(results) {
+        
+        // Sort runs by timestamp
+        var sorted = results.rows.map(function(e) {
+          e.doc.timestamp = new Date(e.doc.timestamp);
+          return e.doc;
+        }).sort(function(a, b) { return b.timestamp - a.timestamp; });
+
+        // Display the runs
+        var list = "";
+        for (var i in sorted) {
+          var ts = sorted[i].timestamp;
+          var date = /*ts.getHours() + ":" + ts.getMinutes() + " on " + */ts.getMonth() + "/" + ts.getDate() + "/" + (ts.getYear() + 1900);
+          list += "<li><a href=\"javascript:App.ui.setRun('" + sorted[i]._id + "');\">" + date + "</a></li>";
+        }
+        document.getElementById("runs").innerHTML = "<ul>" + list + "</ul>";
+
+        resolve();
+      });
+    });
   }
 
   /* Display data from the local cache */
@@ -38,6 +59,8 @@ class UI {
 
         /* Show the count of runs */
         document.getElementById("title").innerHTML = results.total_rows + " runs";
+
+        /* Show the list of runs */
 
         /* Run the custom code */
         eval(document.getElementById("input").value);
@@ -119,5 +142,13 @@ class UI {
       clearInterval(this.timers[i]);
     }
     this.timers = [];
+  }
+
+  // Set the current run to that specified
+  setRun(id) {
+    console.log("Setting current run to " + id);
+
+    this.currentRun = id;
+    this.refresh();
   }
 }
