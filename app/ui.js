@@ -38,7 +38,7 @@ class UI {
         var list = "";
         for (var i in sorted) {
           var ts = sorted[i].timestamp;
-          var date = /*ts.getHours() + ":" + ts.getMinutes() + " on " + */ts.getMonth() + "/" + ts.getDate() + "/" + (ts.getYear() + 1900);
+          var date = /*ts.getHours() + ":" + ts.getMinutes() + " on " + */(ts.getMonth() + 1) + "/" + ts.getDate() + "/" + (ts.getYear() + 1900);
           list += "<li><a href=\"javascript:App.ui.setRun('" + sorted[i]._id + "');\">" + date + "</a></li>";
         }
         document.getElementById("runs").innerHTML = "<ul>" + list + "</ul>";
