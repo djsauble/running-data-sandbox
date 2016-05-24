@@ -2,12 +2,22 @@ body {
   /*background-color: #000000;*/
 }
 
+ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
 .editor {
   display: flex;
 }
 
-.editor textarea,
-.editor div {
+.editor #runs {
+  padding-right: 3em;
+}
+
+.editor #input,
+.editor #output {
   flex: 1;
   min-height: 400px;
 }
