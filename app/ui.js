@@ -2,7 +2,7 @@ class UI {
   constructor() {
     this.overlays = [];
     this.timers = [];
-    this.currentRun = "27bb62d31b5bfee762d1f4d021e95dc800999f12";
+    this.currentRun = null;
   }
 
   /* Initialize the UI */
@@ -33,6 +33,9 @@ class UI {
           e.doc.timestamp = new Date(e.doc.timestamp);
           return e.doc;
         }).sort(function(a, b) { return b.timestamp - a.timestamp; });
+
+        // Set the current run to the latest one
+        me.currentRun = sorted[0]._id;
 
         // Display the runs
         var list = "";
