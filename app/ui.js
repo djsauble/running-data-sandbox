@@ -1,5 +1,6 @@
 class UI {
   constructor() {
+    this.overlays = [];
   }
 
   /* Initialize the UI */
@@ -8,8 +9,8 @@ class UI {
     me.data = data;
 
     // Configure event handlers
-    document.getElementById("input").addEventListener('input', function(cmp) {
-      eval(cmp.target.value);
+    document.getElementById("input").addEventListener('input', function() {
+      me.refresh();
     });
 
     // Wire up the refresh button
@@ -29,7 +30,6 @@ class UI {
   refresh() {
     console.log("Refreshing display...");
 
-    var runId = "e4f83f6cbbeaa72e3e27da94824d416a74bb5953";
     var me = this;
 
     return new Promise(function(resolve, reject) {
@@ -38,43 +38,23 @@ class UI {
         /* Show the count of runs */
         document.getElementById("title").innerHTML = results.total_rows + " runs";
 
-        return me.data.db.get(runId, {attachments: true});
-      }).then(function(doc) {
-
-        /* Convert the data to a usable format */
-        var data = JSON.parse(
-             atob(
-               doc._attachments["data.json"]["data"]
-             )
-           );
-
-        /* Construct the run route */
-        var coords = [];
-        var bounds = new google.maps.LatLngBounds();
-        for (var i in data) {
-          var coord = new google.maps.LatLng({
-            lat: parseFloat(data[i]["latitude"]),
-            lng: parseFloat(data[i]["longitude"])
-          });
-          coords.push(coord);
-          bounds.extend(coord);
-        }
-
-        /* Create a path */
-        var path = new google.maps.Polyline({
-          path: coords,
-          geodesic: true,
-          strokeColor: '#ff0000',
-          strokeOpacity: 0.7,
-          strokeWeight: 2
-        });
-
-        /* Show the path */
-        path.setMap(me.map);
-        me.map.fitBounds(bounds);
-
-        resolve();
+        /* Run the custom code */
+        eval(document.getElementById("input").value);
       });
     });
+  }
+
+  /* Helper methods for users of the sandbox */
+
+  addOverlay(overlay) {
+    overlay.setMap(this.map);
+    this.overlays.push(overlay);
+  }
+
+  removeAllOverlays() {
+    for (var i in this.overlays) {
+      this.overlays[i].setMap(null);
+    }
+    this.overlays = [];
   }
 }

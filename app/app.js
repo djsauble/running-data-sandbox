@@ -1,5 +1,7 @@
-// Load the app when the page loads
+// Global variable for RunApp
 var App;
+
+// Load the app when the page loads
 window.onload = function() {
   App = new RunApp();
 }
