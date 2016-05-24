@@ -1,6 +1,7 @@
 class UI {
   constructor() {
     this.overlays = [];
+    this.timers = [];
   }
 
   /* Initialize the UI */
@@ -44,17 +45,79 @@ class UI {
     });
   }
 
-  /* Helper methods for users of the sandbox */
+  /*******************************************
+   * Helper methods for users of the sandbox *
+   *******************************************/
 
+  // Add an overlay to the map
   addOverlay(overlay) {
     overlay.setMap(this.map);
     this.overlays.push(overlay);
   }
 
+  // Remove all overlays from the map
   removeAllOverlays() {
     for (var i in this.overlays) {
       this.overlays[i].setMap(null);
     }
     this.overlays = [];
+  }
+
+  // Get an array of coordinates
+  getCoordinates(data) {
+    var coords = [];
+
+    for (var i in data) {
+      coords.push(new google.maps.LatLng({
+        lat: parseFloat(data[i]["latitude"]),
+        lng: parseFloat(data[i]["longitude"])
+      }));
+    }
+
+    return coords;
+  }
+
+  // Set the map to the given path boundaries
+  setBoundaries(coords) {
+    var bounds = new google.maps.LatLngBounds();
+
+    for (var i in coords) {
+      bounds.extend(coords[i]);
+    }
+
+    this.map.fitBounds(bounds);
+  }
+
+  // Get the run data from the given document (convert from base-64 to JSON)
+  getRun(doc) {
+    return JSON.parse(
+       atob(
+         doc._attachments["data.json"]["data"]
+       )
+     );
+  }
+
+  // Animate a function
+  startAnimation(expression, interval) {
+    var timerId = setInterval(expression, interval);
+    this.timers.push(timerId);
+    return timerId;
+  }
+
+  // Stop a specific animation
+  stopAnimation(id) {
+    var index = this.timers.indexOf(id);
+    if (index >= 0) {
+      clearInterval(this.timers[index]);
+    }
+    this.timers.splice(index, 1);
+  }
+
+  // Stop animations
+  stopAnimations() {
+    for (var i in this.timers) {
+      clearInterval(this.timers[i]);
+    }
+    this.timers = [];
   }
 }
