@@ -154,4 +154,38 @@ class UI {
     this.currentRun = id;
     this.refresh();
   }
+
+  // Smooth the run (e.g. ignore bouncing GPS tracks)
+  defaultFilter(data) {
+    var filtered = [];
+    var maxDistance = 30; // Meters
+
+    for (var i = 1; i < data.length - 1; ++i) {
+      var pt1 = new google.maps.LatLng(
+          {
+            lat: parseFloat(data[i-1].latitude),
+            lng: parseFloat(data[i-1].longitude)
+          }
+      );
+      var pt2 = new google.maps.LatLng(
+          {
+            lat: parseFloat(data[i].latitude),
+            lng: parseFloat(data[i].longitude)
+          }
+      );
+      var pt3 = new google.maps.LatLng(
+          {
+            lat: parseFloat(data[i+1].latitude),
+            lng: parseFloat(data[i+1].longitude)
+          }
+      );
+      var d1 = google.maps.geometry.spherical.computeDistanceBetween(pt1, pt2);
+      var d2 = google.maps.geometry.spherical.computeDistanceBetween(pt2, pt3);
+      if (d1 <= maxDistance && d2 <= maxDistance) {
+        filtered.push(data[i]);
+      }
+    }
+
+    return filtered;
+  }
 }

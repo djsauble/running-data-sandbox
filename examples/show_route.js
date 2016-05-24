@@ -1,9 +1,9 @@
 me.removeAllOverlays();
 
 me.data.db.get(me.currentRun, {attachments: true}).then(function(doc) {
-  console.log(doc._id);
   var data = me.getRun(doc);
-  var coords = me.getCoordinates(data);
+  var filtered = me.defaultFilter(data);
+  var coords = me.getCoordinates(filtered);
 
   var path = new google.maps.Polyline({
     path: coords,

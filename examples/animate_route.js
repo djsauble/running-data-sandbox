@@ -1,9 +1,9 @@
 me.stopAnimations();
 
 me.data.db.get(me.currentRun, {attachments: true}).then(function(doc) {
-  console.log(doc._id);
   var data = me.getRun(doc);
-  var coords = me.getCoordinates(data);
+  var filtered = me.defaultFilter(data);
+  var coords = me.getCoordinates(filtered);
 
   // Set the map boundaries
   me.setBoundaries(coords);
