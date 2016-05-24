@@ -16,7 +16,6 @@ class RunApp {
 
     // Initialize databases
     me.data.init().then(function() {
-      console.log("Ready to go!");
 
       // Initialize the bits of the UI that should not be active until there's data
       me.ui.init(me.data);
