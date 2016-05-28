@@ -188,4 +188,13 @@ class UI {
 
     return filtered;
   }
+
+  // Get the distance represented by a set of coordinates (miles)
+  computeDistance(coords) {
+    var distance = 0;
+    for (var i = 0; i < coords.length - 1; ++i) {
+      distance += google.maps.geometry.spherical.computeDistanceBetween(coords[i], coords[i+1]);
+    }
+    return Math.round((distance / 1609.344) * 10) / 10;
+  }
 }
