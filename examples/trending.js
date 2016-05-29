@@ -71,6 +71,6 @@ me.data.db.allDocs({include_docs: true}).then(function(results) {
     console.log(Math.round(((distance1 / distance2) - 1) * 100) + "% increase in week over week mileage");
   }
   else {
-    console.log(Math.round((distance1 / distance2) * 100) + "% decrease in week over week mileage");
+    console.log(Math.round(Math.abs(((distance1 / distance2) - 1)) * 100) + "% decrease in week over week mileage");
   }
 });
